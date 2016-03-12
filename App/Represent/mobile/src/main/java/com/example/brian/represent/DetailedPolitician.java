@@ -3,7 +3,11 @@ package com.example.brian.represent;
 /**
  * Created by Brian on 3/1/16.
  */
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -29,48 +33,26 @@ public class DetailedPolitician extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        Intent activityIntent = getIntent();
+        int button = activityIntent.getIntExtra("BUTTON", 100);
+//        String zipcode = activityIntent.getStringExtra("LOCATION");
 
-        ImageView image = (ImageView)findViewById(R.id.imageView);
-        TextView politician = (TextView) findViewById(R.id.textView3);
-        TextView party = (TextView) findViewById(R.id.textView4);
-        TextView end_of_term = (TextView) findViewById(R.id.textView5);
-        TextView committee = (TextView) findViewById(R.id.textView6);
-        TextView bills = (TextView) findViewById(R.id.textView7);
-
-        image.setBackgroundResource(R.drawable.jchu);
-        politician.setText("House Representative: Judy Chu");
-        party.setText("Democratic Party");
-        end_of_term.setText("End of Term: 1/03/17");
-        committee.setText("Committees: Judiciary and Small Business");
-        bills.setText("Recent Bills Sponsored: Transparency in Small Business Goaling Act of 2016. Introduced on 1/06/16");
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            String locate = extras.getString("LOCATION");
-            if (locate != null) {
-                Log.d("T", locate);
-                if (locate.equals("10027")) {
-                    image.setBackgroundResource(R.drawable.billperkins);
-                    politician.setText("House Representative: Bill Perkins");
-                    party.setText("Democratic Party");
-                    end_of_term.setText("End of Term: 12/31/16");
-                    committee.setText("Committees: Judiciary and Transportation");
-                    bills.setText("Recent Bills Sponsored: Bill relating to minimum wage. Introduced on 2/29/16");
-                }
-            }
-
+//        String member = "http://congress.api.sunlightfoundation.com/legislators/locate?zip="
+//                +zipcode+"&apikey=1c450f3a2fe7419f80cf8e1b460910ee";
+        // Gets the URL from the UI's text field.
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+//            AsyncTask<String, Void, String> dwp = new DetailedWebPage(DetailedPolitician.this, this).execute(member);
+            String bioguide = DownloadWebPage.all_info.get(button -1)[0];
+            Log.d("T", bioguide);
+            String committee = "http://congress.api.sunlightfoundation.com/committees?member_ids="
+                    +bioguide+"&apikey=1c450f3a2fe7419f80cf8e1b460910ee";
+            String bill = "http://congress.api.sunlightfoundation.com/bills?sponsor_id="
+                    +bioguide+"&apikey=1c450f3a2fe7419f80cf8e1b460910ee";
+            new DetailedWebPage2(getBaseContext(), this, button - 1).execute(committee);
+            new DetailedWebPage3(getBaseContext(), this).execute(bill);
         }
-
-
     }
 
     @Override

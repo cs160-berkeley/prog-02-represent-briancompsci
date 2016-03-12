@@ -65,22 +65,38 @@ public class WatchToPhoneService extends Service implements GoogleApiClient.Conn
         // Which cat do we want to feed? Grab this info from INTENT
         // which was passed over when we called startService
         final Service _this = this;
-        Bundle extras = intent.getExtras();
-        final String location = extras.getString("LOCATION");
-        Log.d("T", location);
-
-        // Send the message with the cat name
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //first, connect to the apiclient
-                mWatchApiClient.connect();
-                //now that you're connected, send a massage with the cat name
-                sendMessage("/" + location, location);
-                Log.d("T", "sent");
-                _this.stopSelf();
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras.getString("BUTTON") != null) {
+                Log.d("T", "oh noes");
+                final String button = extras.getString("BUTTON");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //first, connect to the apiclient
+                        mWatchApiClient.connect();
+                        //now that you're connected, send a massage with the cat name
+                        sendMessage("BUTTON", button);
+                        _this.stopSelf();
+                    }
+                }).start();
+            } else {
+                final String zipcode = extras.getString("ZIPCODE");
+                Log.d("T", zipcode);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //first, connect to the apiclient
+                        mWatchApiClient.connect();
+                        //now that you're connected, send a massage with the cat name
+                        sendMessage("ZIPCODE", zipcode);
+                        _this.stopSelf();
+                    }
+                }).start();
             }
-        }).start();
+
+            // Send the message with the cat name
+        }
 
         return START_STICKY;
     }

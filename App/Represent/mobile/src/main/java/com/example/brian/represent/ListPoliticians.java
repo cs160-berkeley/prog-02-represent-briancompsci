@@ -3,20 +3,23 @@ package com.example.brian.represent;
 /**
  * Created by Brian on 3/1/16.
  */
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import static android.view.View.*;
+import static android.view.View.OnClickListener;
 
 public class ListPoliticians extends AppCompatActivity {
 
@@ -27,85 +30,57 @@ public class ListPoliticians extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        Intent activityIntent = getIntent();
+        if (activityIntent.hasExtra("ZIPCODE")) {
+            final String zipcode = activityIntent.getStringExtra("ZIPCODE");
+            String url = "http://congress.api.sunlightfoundation.com/legislators/locate?zip="
+                    + zipcode + "&apikey=1c450f3a2fe7419f80cf8e1b460910ee";
+            // Gets the URL from the UI's text field.
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                new DownloadWebPage(ListPoliticians.this, this).execute(url);
             }
-        });
+        } else {
+            final String[] coord = activityIntent.getStringArrayExtra("LOCATION");
+            String url = "http://congress.api.sunlightfoundation.com/legislators/locate?latitude=" +
+                   coord[0]+"&longitude="+coord[1]+"&apikey=1c450f3a2fe7419f80cf8e1b460910ee";
+            // Gets the URL from the UI's text field.
+            ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected()) {
+                new DownloadWebPage(ListPoliticians.this, this).execute(url);
+            }
+        }
 
         ImageButton btn = (ImageButton)findViewById(R.id.imageButton);
         ImageButton btn2 = (ImageButton)findViewById(R.id.imageButton2);
         ImageButton btn3 = (ImageButton)findViewById(R.id.imageButton3);
 
-        btn.setBackgroundResource(R.drawable.jchu);
-        btn2.setBackgroundResource(R.drawable.jchu);
-        btn3.setBackgroundResource(R.drawable.jchu);
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            String location = extras.getString("LOCATION");
-            if (location != null) {
-                if (location.equals("shake")) {
-                    btn.setBackgroundResource(R.drawable.billperkins);
-                    btn2.setBackgroundResource(R.drawable.billperkins);
-                    btn3.setBackgroundResource(R.drawable.billperkins);
-                    TextView textView1 = (TextView) findViewById(R.id.name);
-                    TextView textView2 = (TextView) findViewById(R.id.name2);
-                    TextView textView3 = (TextView) findViewById(R.id.name3);
-                    TextView textView4 = (TextView) findViewById(R.id.party);
-                    TextView textView5 = (TextView) findViewById(R.id.party2);
-                    TextView textView6 = (TextView) findViewById(R.id.party3);
-                    TextView textView7 = (TextView) findViewById(R.id.email);
-                    TextView textView8 = (TextView) findViewById(R.id.email2);
-                    TextView textView9 = (TextView) findViewById(R.id.email3);
-                    TextView textView10 = (TextView) findViewById(R.id.website);
-                    TextView textView11 = (TextView) findViewById(R.id.website2);
-                    TextView textView12 = (TextView) findViewById(R.id.website3);
-                    TextView textView13 = (TextView) findViewById(R.id.tweet);
-                    TextView textView14 = (TextView) findViewById(R.id.tweet2);
-                    TextView textView15 = (TextView) findViewById(R.id.tweet3);
-                    textView1.setText("Bill Perkins");
-                    textView2.setText("Bill Perkins");
-                    textView3.setText("Bill Perkins");
-                    textView4.setText("Democrat");
-                    textView5.setText("Democrat");
-                    textView6.setText("Democrat");
-                    textView7.setText("billperkins@gmail.com");
-                    textView8.setText("billperkins@gmail.com");
-                    textView9.setText("billperkins@gmail.com");
-                    textView10.setText("billperkins.com");
-                    textView11.setText("billperkins.com");
-                    textView12.setText("billperkins.com");
-                    textView13.setText("I rock #rockus");
-                    textView14.setText("I rock and am better than jchu #gome");
-                    textView15.setText("bill perkins best perkins #perkins");
-
-                }
-            }
-        }
-
         btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ListPoliticians.this, DetailedPolitician.class));
+                Intent activityIntent = new Intent(getBaseContext(), DetailedPolitician.class);
+                activityIntent.putExtra("BUTTON", 1);
+                startActivity(activityIntent);
             }
         });
 
         btn2.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ListPoliticians.this, DetailedPolitician.class));
+                Intent activityIntent = new Intent(getBaseContext(), DetailedPolitician.class);
+                activityIntent.putExtra("BUTTON", 2);
+                startActivity(activityIntent);
             }
         });
 
         btn3.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ListPoliticians.this, DetailedPolitician.class));
+                Intent activityIntent = new Intent(getBaseContext(), DetailedPolitician.class);
+                activityIntent.putExtra("BUTTON", 3);
+                startActivity(activityIntent);
             }
         });
     }

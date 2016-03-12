@@ -2,6 +2,7 @@ package com.example.brian.represent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -75,54 +76,88 @@ public class PageFragment extends Fragment implements View.OnClickListener {
         Bundle bundle = getArguments();
 
 
-        int last = bundle.getInt("count");
-        String locate = bundle.getString("areacode");
-        if (last == 4) {
+        int slide = bundle.getInt("count");
+        String[] views = bundle.getStringArray("info");
+        if (slide == 4) {
             view = inflater.inflate(R.layout.presidential_activity, container, false);
-            if (locate.equals("10027")) {
-                TextView state = (TextView) view.findViewById(R.id.textView7);
-                TextView county = (TextView) view.findViewById(R.id.textView8);
-                TextView president1 = (TextView) view.findViewById(R.id.textView9);
-                TextView president2 = (TextView) view.findViewById(R.id.textView);
-                state.setText("New York");
-                county.setText("New York County");
-                president1.setText("Obama: 60%");
-                president2.setText("Romney: 40%");
-            }
-        } else {
+            TextView state = (TextView) view.findViewById(R.id.textView7);
+            TextView county = (TextView) view.findViewById(R.id.textView8);
+            TextView president1 = (TextView) view.findViewById(R.id.textView9);
+            TextView president2 = (TextView) view.findViewById(R.id.textView);
+            state.setText("State: " +views[10]);
+            county.setText("County: "+views[11]);
+            president1.setText("Obama: " + views[12]+"% of Votes");
+            president2.setText("Romney: "+ views[13]+"% of Votes");
+        } else if (slide == 1) {
             view = inflater.inflate(R.layout.page_fragment_layout, container, false);
-            ImageButton imageBtn = (ImageButton) view.findViewById(R.id.imageButton);
+            Button Btn = (Button) view.findViewById(R.id.button);
             TextView first = (TextView) view.findViewById(R.id.textView3);
             TextView second = (TextView) view.findViewById(R.id.textView4);
-            Log.d("T", locate);
-            if (locate.equals("90032")) {
-                imageBtn.setBackgroundResource(R.drawable.jchu);
-                first.setText("Representative Judy Chu");
-                second.setText("Democratic Party");
-                imageBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MainActivity activity = (MainActivity) getActivity();
-                        Intent sendIntent = new Intent(activity.getBaseContext(), WatchToPhoneService.class);
-                        Log.d("T", "sent222");
-                        sendIntent.putExtra("LOCATION", "90032");
-                        activity.startService(sendIntent);
-                    }
-                });
+            Btn.setBackgroundResource(R.drawable.jchu);
+            first.setText(views[1] + ": " + views[2]);
+            second.setText("Party: " + views[3]);
+            if (views[3].equals("Democrat")) {
+                Btn.setBackgroundColor(Color.parseColor("#336699"));
+            } else if (views[3].equals("Republican")) {
+                Btn.setBackgroundColor(Color.parseColor("#8c001a"));
             } else {
-                imageBtn.setBackgroundResource(R.drawable.billperkins);
-                first.setText("Senator Bill Perkins");
-                second.setText("Democratic Party");
-                imageBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MainActivity activity = (MainActivity) getActivity();
-                        Intent sendIntent = new Intent(activity.getBaseContext(), WatchToPhoneService.class);
-                        sendIntent.putExtra("LOCATION", "10027");
-                        activity.startService(sendIntent);
-                    }
-                });
+                Btn.setBackgroundColor(Color.parseColor("#663399"));
             }
+            Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    Intent sendIntent = new Intent(activity.getBaseContext(), WatchToPhoneService.class);
+                    sendIntent.putExtra("BUTTON", "1");
+                    activity.startService(sendIntent);
+                }
+            });
+        } else if (slide == 2) {
+            view = inflater.inflate(R.layout.page_fragment_layout, container, false);
+            Button Btn = (Button) view.findViewById(R.id.button);
+            TextView first = (TextView) view.findViewById(R.id.textView3);
+            TextView second = (TextView) view.findViewById(R.id.textView4);
+            first.setText(views[4] + ": " + views[5]);
+            second.setText("Party: " + views[6]);
+            if (views[6].equals("Democrat")) {
+                Btn.setBackgroundColor(Color.parseColor("#336699"));
+            } else if (views[6].equals("Republican")) {
+                Btn.setBackgroundColor(Color.parseColor("#8c001a"));
+            } else {
+                Btn.setBackgroundColor(Color.parseColor("#663399"));
+            }
+            Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    Intent sendIntent = new Intent(activity.getBaseContext(), WatchToPhoneService.class);
+                    sendIntent.putExtra("BUTTON", "2");
+                    activity.startService(sendIntent);
+                }
+            });
+        } else {
+            view = inflater.inflate(R.layout.page_fragment_layout, container, false);
+            Button Btn = (Button) view.findViewById(R.id.button);
+            TextView first = (TextView) view.findViewById(R.id.textView3);
+            TextView second = (TextView) view.findViewById(R.id.textView4);
+            first.setText(views[7] + ": " + views[8]);
+            second.setText("Party: " + views[9]);
+            if (views[9].equals("Democrat")) {
+                Btn.setBackgroundColor(Color.parseColor("#336699"));
+            } else if (views[9].equals("Republican")) {
+                Btn.setBackgroundColor(Color.parseColor("#8c001a"));
+            } else {
+                Btn.setBackgroundColor(Color.parseColor("#663399"));
+            }
+            Btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MainActivity activity = (MainActivity) getActivity();
+                    Intent sendIntent = new Intent(activity.getBaseContext(), WatchToPhoneService.class);
+                    sendIntent.putExtra("BUTTON", "3");
+                    activity.startService(sendIntent);
+                }
+            });
         }
         return view;
     }

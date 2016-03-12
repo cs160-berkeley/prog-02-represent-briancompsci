@@ -10,17 +10,19 @@ import android.support.v4.app.FragmentStatePagerAdapter;
  * Created by Brian on 3/1/16.
  */
 public class SwipeAdapter extends FragmentStatePagerAdapter {
-    public SwipeAdapter(FragmentManager fm) {
+
+    private String[] str;
+    public SwipeAdapter(FragmentManager fm, String[] str) {
         super(fm);
+        this.str = str;
     }
 
-    public String areacode = "90032";
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = new PageFragment();
         Bundle bundle = new Bundle();
+        bundle.putStringArray("info", str);
         bundle.putInt("count",position+1);
-        bundle.putString("areacode", areacode);
         fragment.setArguments(bundle);
         return fragment;
     }
